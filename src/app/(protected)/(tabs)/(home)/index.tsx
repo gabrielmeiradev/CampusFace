@@ -1,87 +1,37 @@
-import { Alert, View, Modal } from "react-native";
 import { AppText } from "@/components/AppText";
-import { Link, useRouter } from "expo-router";
-import { Button } from "@/components/Button";
-import { useState } from "react";
+import React from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View } from "react-native";
+import CardContainer from "@/components/card/CardContainer";
+import { router } from "expo-router";
 
 export default function IndexScreen() {
-  const router = useRouter();
-  const canGoBack = router.canGoBack();
-  const [modalVisible, setModalVisible] = useState(false);
-
-  // https://reactnative.dev/docs/alert
-  const handleOpenAlert = () => {
-    Alert.alert("Warning!", "Are you sure you want to proceed?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Confirm",
-        style: "destructive",
-        onPress: () => {
-          console.log("Let's go!");
-        },
-      },
-    ]);
-  };
-
   return (
-    <View className="justify-center flex-1 p-4">
-      <AppText center>Index Screen</AppText>
-      <Link href="/home-nested" push asChild>
-        <Button title="Push to /home-nested" />
-      </Link>
-      {canGoBack ? (
-        <Button
-          title="Back"
-          theme="secondary"
-          onPress={() => {
-            router.back();
-          }}
-        />
-      ) : null}
-      <Button
-        title="Open Alert"
-        theme="secondary"
-        onPress={() => handleOpenAlert()}
-      />
-      <Button
-        title="Open RN Modal"
-        theme="secondary"
-        onPress={() => setModalVisible(true)}
-      />
-      <Link href="/modal" push asChild>
-        <Button title="Open Router Modal" theme="secondary" />
-      </Link>
-      <Link href="/modal-with-stack" push asChild>
-        <Button title="Open Router Modal (Stack)" theme="secondary" />
-      </Link>
-      {/* https://reactnative.dev/docs/modal */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent
-        // presentationStyle="pageSheet"
-        onRequestClose={() => {
-          setModalVisible(false);
+    <View className="justify-center items-center flex-1 p-4">
+      <AddCard />
+    </View>
+  );
+}
+
+function AddCard() {
+  return (
+    <>
+      <CardContainer
+        onPress={() => {
+          router.push("/add-card");
         }}
       >
-        <View className="flex-1 items-center justify-center">
-          <View className="p-12 rounded-lg bg-white">
-            <AppText center size="heading">
-              A custom styled modal!
-            </AppText>
-            <Button
-              title="Close"
-              theme="secondary"
-              onPress={() => {
-                setModalVisible(false);
-              }}
+        <View className="flex-1 justify-center items-center">
+          <View className="flex-row items-center gap-3">
+            <MaterialCommunityIcons
+              name="card-plus"
+              size={30}
+              className="text-gray-300"
             />
+            <AppText className="!m-0 text-gray-300">Adicionar Card</AppText>
           </View>
         </View>
-      </Modal>
-    </View>
+      </CardContainer>
+    </>
   );
 }

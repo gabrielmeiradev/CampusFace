@@ -11,15 +11,7 @@ export default function FourthScreen() {
 
   return (
     <View className="justify-center flex-1 p-4">
-      <AppText center>Fourth Screen</AppText>
-      <Button
-        title="Back"
-        theme="secondary"
-        onPress={() => {
-          router.back();
-        }}
-      />
-      <Button title="Log out!" onPress={authState.logOut} />
+      <Button title="Sair da conta" onPress={authState.logOut} />
     </View>
   );
 }

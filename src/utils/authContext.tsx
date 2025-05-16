@@ -7,7 +7,7 @@ SplashScreen.preventAutoHideAsync();
 type AuthState = {
   isLoggedIn: boolean;
   isReady: boolean;
-  logIn: () => void;
+  logIn: (email: string, password: string) => void;
   logOut: () => void;
 };
 
@@ -16,7 +16,7 @@ const authStorageKey = "auth-key";
 export const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
   isReady: false,
-  logIn: () => {},
+  logIn: (email: string, password: string) => {},
   logOut: () => {},
 });
 
@@ -34,7 +34,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const logIn = () => {
+  const emailA = "admin";
+  const passwordA = "admin";
+
+  const logIn = (email: string, password: string) => {
+    if (email !== emailA || password !== passwordA) {
+      throw new Error("Credenciais inválidas");
+    }
+
     setIsLoggedIn(true);
     storeAuthState({ isLoggedIn: true });
     router.replace("/");
@@ -48,8 +55,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const getAuthFromStorage = async () => {
-      // simulate a delay, e.g. for an API request
-      await new Promise((res) => setTimeout(() => res(null), 1000));
       try {
         const value = await AsyncStorage.getItem(authStorageKey);
         if (value !== null) {

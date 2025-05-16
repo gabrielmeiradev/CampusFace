@@ -5,33 +5,28 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 export default function BottomTabsLayout() {
   return (
     <Tabs
-      screenOptions={{ tabBarActiveTintColor: "teal" }}
+      screenOptions={{ tabBarActiveTintColor: "#1C1B1F" }}
       backBehavior="order"
     >
       <Tabs.Screen
         name="(home)"
         options={{
-          title: "Home",
+          title: "Cards",
           headerShown: false,
-          tabBarLabel: "Index",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="numeric-1-box-outline"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="cards" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="second"
+        name="my-id"
         options={{
-          title: "Second",
+          title: "Minha ID",
           headerShown: false,
           popToTopOnBlur: true,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="numeric-2-box-outline"
+              name="badge-account-horizontal"
               size={size}
               color={color}
             />
@@ -39,33 +34,11 @@ export default function BottomTabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="third"
+        name="settings"
         options={{
-          title: "Third",
+          title: "Configurações",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="numeric-3-box-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="fourth"
-        options={{
-          tabBarBadge: 2,
-          tabBarBadgeStyle: {
-            backgroundColor: "tomato",
-            color: "white",
-          },
-          title: "Fourth",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="numeric-4-box-outline"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="cog" size={size} color={color} />
           ),
         }}
       />
