@@ -15,8 +15,14 @@ export default function IndexScreen() {
     fetchCards();
   }, []);
   return (
-    <ScrollView className="justify-center items-center flex-1">
-      <View className="pt-3">
+    <ScrollView
+      contentContainerStyle={{
+        justifyContent: "center",
+        alignItems: "center",
+        flexGrow: 1,
+      }}
+    >
+      <View style={{ paddingTop: 12 }}>
         {cards.map((card) => (
           <Card key={card.id} id={card.id} title={card.title} />
         ))}

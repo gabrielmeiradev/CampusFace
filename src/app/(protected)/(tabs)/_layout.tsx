@@ -22,7 +22,7 @@ export default function BottomTabsLayout() {
         name="my-id"
         options={{
           title: "Minha ID",
-          headerShown: false,
+          headerShown: true,
           popToTopOnBlur: true,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
@@ -37,6 +37,7 @@ export default function BottomTabsLayout() {
         name="settings"
         options={{
           title: "Configurações",
+
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cog" size={size} color={color} />
           ),

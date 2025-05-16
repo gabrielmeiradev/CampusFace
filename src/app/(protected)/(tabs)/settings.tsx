@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { useContext } from "react";
 import { AuthContext } from "@/utils/authContext";
 
-export default function FourthScreen() {
+export default function SettingsScreen() {
   const router = useRouter();
   const authState = useContext(AuthContext);
 

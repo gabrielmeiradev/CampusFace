@@ -1,15 +1,13 @@
-import { Stack, usePathname } from "expo-router";
+import { View } from "react-native";
+import { AppText } from "@/components/AppText";
+import { Link, useRouter } from "expo-router";
 
-export default function Layout() {
-  const pathname = usePathname();
+export default function SecondScreen() {
+  const router = useRouter();
 
   return (
-    <Stack
-      screenOptions={{
-        animation: pathname.startsWith("/my-id") ? "default" : "none",
-      }}
-    >
-      <Stack.Screen name="index" options={{ title: "Minha ID" }} />
-    </Stack>
+    <View className="justify-center flex-1 p-4">
+      <AppText center>Tela de configuração do ID</AppText>
+    </View>
   );
 }

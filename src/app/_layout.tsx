@@ -12,10 +12,11 @@ export default function RootLayout() {
         <Stack.Screen
           name="(protected)"
           options={{
-            headerShown: false,
             animation: "none",
+            headerShown: false,
           }}
         />
+
         <Stack.Screen
           name="login"
           options={{
