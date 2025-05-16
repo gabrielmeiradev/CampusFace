@@ -22,7 +22,7 @@ export const Button = React.forwardRef<
         theme === "primary" && "bg-primary border-primary",
         theme === "secondary" && "bg-white border-gray-300",
         theme === "tertiary" && "bg-transparent border-transparent",
-        disabled && "opacity-50",
+        disabled && "opacity-50"
       )}
       disabled={disabled}
       {...rest}
@@ -32,7 +32,7 @@ export const Button = React.forwardRef<
           "font-semibold text-lg tracking-wider",
           theme === "secondary" && "text-black",
           theme === "primary" && "text-white",
-          theme === "tertiary" && "text-gray-800",
+          theme === "tertiary" && "text-gray-800"
         )}
       >
         {title} {disabled}

@@ -1,3 +1,3 @@
-export default function AddCard() {
+export default function AddCardPage() {
   return <></>;
 }

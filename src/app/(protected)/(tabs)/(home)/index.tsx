@@ -1,37 +1,28 @@
-import { AppText } from "@/components/AppText";
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View } from "react-native";
-import CardContainer from "@/components/card/CardContainer";
-import { router } from "expo-router";
+import AddCard from "@/components/card/AddCard";
+import Card from "@/components/card/Card";
+import { getUserCards } from "@/services/card/getUsersCards";
+import { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
 
 export default function IndexScreen() {
-  return (
-    <View className="justify-center items-center flex-1 p-4">
-      <AddCard />
-    </View>
-  );
-}
+  const [cards, setCards] = useState<any[]>([]);
 
-function AddCard() {
+  useEffect(() => {
+    const fetchCards = async () => {
+      const data = await getUserCards();
+      setCards(data);
+    };
+    fetchCards();
+  }, []);
   return (
-    <>
-      <CardContainer
-        onPress={() => {
-          router.push("/add-card");
-        }}
-      >
-        <View className="flex-1 justify-center items-center">
-          <View className="flex-row items-center gap-3">
-            <MaterialCommunityIcons
-              name="card-plus"
-              size={30}
-              className="text-gray-300"
-            />
-            <AppText className="!m-0 text-gray-300">Adicionar Card</AppText>
-          </View>
-        </View>
-      </CardContainer>
-    </>
+    <ScrollView className="justify-center items-center flex-1">
+      <View className="pt-3">
+        {cards.map((card) => (
+          <Card key={card.id} id={card.id} title={card.title} />
+        ))}
+
+        <AddCard />
+      </View>
+    </ScrollView>
   );
 }
