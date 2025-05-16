@@ -12,7 +12,7 @@ export default function LoginScreen() {
 
   function handleLogin() {
     try {
-      authContext.logIn(email, password);
+      authContext.logIn(email.toLowerCase(), password.toLowerCase());
       console.log("Login successful");
     } catch (error) {
       alert((error as Error).message);

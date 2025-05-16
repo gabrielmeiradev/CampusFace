@@ -10,14 +10,14 @@ export default function Card({ id, title }: { id: string; title: string }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push("/card/" + id);
+        router.push("(tabs)/(home)/card/" + id);
       }}
       className="bg-white border border-gray-200 shadow-sm p-8 mb-3 rounded-lg flex flex-row items-center justify-between"
       style={{
         width: screenWidth - 48,
       }}
     >
-      <Text className="text-gray-500 text-lg">{title}</Text>
+      <Text className="text-gray-500 text-lg font-semibold">{title}</Text>
       <MaterialCommunityIcons name="chevron-right" size={24} color="black" />
     </TouchableOpacity>
   );
