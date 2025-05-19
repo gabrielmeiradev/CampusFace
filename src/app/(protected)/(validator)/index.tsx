@@ -37,7 +37,7 @@ export default function ScannerScreen() {
         )
       );
 
-      alert(`Aluno com ID ${studentId} registrado com sucesso!`);
+      // alert(`Aluno com ID ${studentId} registrado com sucesso!`);
     } catch (error) {
       alert('Código QR inválido');
     }

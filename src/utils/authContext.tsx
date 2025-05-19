@@ -16,8 +16,8 @@ const authStorageKey = "auth-key";
 export const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
   isReady: false,
-  logIn: (email: string, password: string) => {},
-  logOut: () => {},
+  logIn: (email: string, password: string) => { },
+  logOut: () => { },
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const router = useRouter();
 
 
- 
+
   const storeAuthState = async (newState: { isLoggedIn: boolean }) => {
     try {
       const jsonValue = JSON.stringify(newState);
@@ -40,13 +40,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const passwordA = "admin";
 
   const logIn = (email: string, password: string) => {
-    if (email !== emailA || password !== passwordA) {
+    setIsLoggedIn(true);
+    storeAuthState({ isLoggedIn: true });
+    
+    if (email == "admin" && password == "admin") {
+      router.replace("(protected)/(user)");
+    } else if (email == "valid" && password == "valid") {
+      router.replace("(protected)/(validator)");
+    } else {
+      setIsLoggedIn(false);
+      storeAuthState({ isLoggedIn: false });
+
       throw new Error("Credenciais inválidas");
     }
 
-    setIsLoggedIn(true);
-    storeAuthState({ isLoggedIn: true });
-    router.replace("(protected)/(validator)");
   };
 
   const logOut = () => {
@@ -74,12 +81,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (isReady) {
       SplashScreen.hideAsync();
-      if(!isLoggedIn) {
+
         router.replace("/login");
-      } else {
-        router.replace("(protected)/(validator)")
-      }
       
+
     }
   }, [isReady]);
 
