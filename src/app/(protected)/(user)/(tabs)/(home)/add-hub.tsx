@@ -11,6 +11,7 @@ export default function AddHubPage() {
         value={search}
         onChangeText={setSearch}
       />
+      
     </View>
   );
 }

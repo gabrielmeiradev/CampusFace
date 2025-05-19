@@ -10,12 +10,20 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack>
         <Stack.Screen
-          name="(protected)"
+          name="(protected)/(user)"
           options={{
             animation: "none",
             headerShown: false,
           }}
         />
+         <Stack.Screen
+          name="(protected)/(validator)"
+          options={{
+            animation: "none",
+            headerShown: false,
+          }}
+        />
+
 
         <Stack.Screen
           name="login"

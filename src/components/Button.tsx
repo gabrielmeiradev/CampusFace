@@ -29,7 +29,7 @@ export const Button = React.forwardRef<
     >
       <Text
         className={cn(
-          "font-semibold text-lg tracking-wider",
+          "font-semibold text-md tracking-wider",
           theme === "secondary" && "text-black",
           theme === "primary" && "text-white",
           theme === "tertiary" && "text-gray-800"

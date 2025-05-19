@@ -25,6 +25,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
+
+ 
   const storeAuthState = async (newState: { isLoggedIn: boolean }) => {
     try {
       const jsonValue = JSON.stringify(newState);
@@ -44,7 +46,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     setIsLoggedIn(true);
     storeAuthState({ isLoggedIn: true });
-    router.replace("/");
+    router.replace("(protected)/(validator)");
   };
 
   const logOut = () => {
@@ -72,6 +74,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (isReady) {
       SplashScreen.hideAsync();
+      if(!isLoggedIn) {
+        router.replace("/login");
+      } else {
+        router.replace("(protected)/(validator)")
+      }
+      
     }
   }, [isReady]);
 
