@@ -1,13 +1,12 @@
-import { View } from "react-native";
 import { Button } from "@/components/Button";
-import { useContext } from "react";
 import { AuthContext } from "@/utils/authContext";
+import { useContext } from "react";
+import { View } from "react-native";
 
-export default function SettingsScreen() {
+export default function Settings() {
   const authState = useContext(AuthContext);
-
   return (
-    <View className="justify-center flex-1 p-4">
+    <View className="flex-1 items-center justify-center">
       <Button title="Sair da conta" onPress={authState.logOut} />
     </View>
   );

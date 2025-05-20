@@ -1,8 +1,13 @@
 // app/scanner.tsx
-import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { CameraView, BarcodeScanningResult, Camera, PermissionStatus } from 'expo-camera';
-import { StudentContext } from './contexts/StudentContext';
+import React, { useEffect, useState, useContext } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  CameraView,
+  BarcodeScanningResult,
+  Camera,
+  PermissionStatus,
+} from "expo-camera";
+import { StudentContext } from "./contexts/StudentContext";
 
 export default function ScannerScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -23,7 +28,7 @@ export default function ScannerScreen() {
     const { data } = result;
 
     try {
-      let studentId = '';
+      let studentId = "";
       try {
         const json = JSON.parse(data);
         studentId = json.id;
@@ -31,15 +36,13 @@ export default function ScannerScreen() {
         studentId = data;
       }
 
-      setStudents(prev =>
-        prev.map(s =>
-          s.id === studentId ? { ...s, checkedIn: true } : s
-        )
+      setStudents((prev) =>
+        prev.map((s) => (s.id === studentId ? { ...s, checkedIn: true } : s))
       );
 
       // alert(`Aluno com ID ${studentId} registrado com sucesso!`);
     } catch (error) {
-      alert('Código QR inválido');
+      alert("Código QR inválido");
     }
 
     setTimeout(() => setScanned(false), 2000);
@@ -53,7 +56,7 @@ export default function ScannerScreen() {
       <CameraView
         style={styles.camera}
         facing="back"
-        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
         onBarcodeScanned={handleBarCodeScanned}
       >
         <View style={styles.overlay}>
@@ -61,7 +64,10 @@ export default function ScannerScreen() {
         </View>
       </CameraView>
       {scanned && (
-        <TouchableOpacity onPress={() => setScanned(false)} style={styles.button}>
+        <TouchableOpacity
+          onPress={() => setScanned(false)}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Toque para escanear novamente</Text>
         </TouchableOpacity>
       )}
@@ -74,25 +80,25 @@ const styles = StyleSheet.create({
   camera: { flex: 1 },
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   scanArea: {
     width: 250,
     height: 250,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   button: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
-    alignSelf: 'center',
-    backgroundColor: '#2196F3',
+    alignSelf: "center",
+    backgroundColor: "#2196F3",
     padding: 12,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

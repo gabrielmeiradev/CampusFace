@@ -16,7 +16,7 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="(protected)/(validator)"
           options={{
             animation: "none",
@@ -24,9 +24,15 @@ export default function RootLayout() {
           }}
         />
 
-
         <Stack.Screen
           name="login"
+          options={{
+            headerShown: false,
+            animation: "none",
+          }}
+        />
+        <Stack.Screen
+          name="register"
           options={{
             headerShown: false,
             animation: "none",

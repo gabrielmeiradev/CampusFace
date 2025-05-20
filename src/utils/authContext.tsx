@@ -1,6 +1,8 @@
+import { RegisterUser } from "@/interfaces/UserRegistration";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SplashScreen, useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import constants from "./constants";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -9,6 +11,7 @@ type AuthState = {
   isReady: boolean;
   logIn: (email: string, password: string) => void;
   logOut: () => void;
+  register: (user: RegisterUser) => void;
 };
 
 const authStorageKey = "auth-key";
@@ -16,16 +19,15 @@ const authStorageKey = "auth-key";
 export const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
   isReady: false,
-  logIn: (email: string, password: string) => { },
-  logOut: () => { },
+  logIn: (email: string, password: string) => {},
+  logOut: () => {},
+  register: (user: RegisterUser) => {},
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
-
-
 
   const storeAuthState = async (newState: { isLoggedIn: boolean }) => {
     try {
@@ -36,24 +38,65 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const emailA = "admin";
-  const passwordA = "admin";
+  const logIn = async (username: string, password: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
 
-  const logIn = (email: string, password: string) => {
-    setIsLoggedIn(true);
-    storeAuthState({ isLoggedIn: true });
-    
-    if (email == "admin" && password == "admin") {
-      router.replace("(protected)/(user)");
-    } else if (email == "valid" && password == "valid") {
-      router.replace("(protected)/(validator)");
-    } else {
+      const response = await fetch(`${constants.API_URL}/auth/login`, {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log(JSON.stringify({ username, password }));
+
+      console.log(`${constants.API_URL}/auth/login`);
+
+      if (!response.ok) {
+        setIsLoggedIn(false);
+
+        storeAuthState({ isLoggedIn: false });
+        throw new Error("Credenciais inválidas");
+      }
+
+      const data = await response.json();
+      setIsLoggedIn(true);
+      storeAuthState({ isLoggedIn: true });
+
+      if (data.main_role === "user") {
+        router.replace("(protected)/(user)");
+      } else if (data.main_role === "validator") {
+        router.replace("(protected)/(validator)");
+      } else {
+        router.replace("/");
+      }
+    } catch (error) {
       setIsLoggedIn(false);
       storeAuthState({ isLoggedIn: false });
-
-      throw new Error("Credenciais inválidas");
+      throw new Error("Erro ao fazer login");
     }
+  };
 
+  const register = async (user: RegisterUser) => {
+    try {
+      const response = await fetch(`${constants.API_URL}/user/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao registrar usuário");
+      }
+
+      const data = await response.json();
+      console.log("Usuário registrado com sucesso:", data);
+    } catch (error) {
+      throw new Error("Erro ao registrar usuário");
+    }
   };
 
   const logOut = () => {
@@ -82,9 +125,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (isReady) {
       SplashScreen.hideAsync();
 
-        router.replace("/login");
-      
-
+      router.replace("/login");
     }
   }, [isReady]);
 
@@ -95,6 +136,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         isLoggedIn,
         logIn,
         logOut,
+        register,
       }}
     >
       {children}
