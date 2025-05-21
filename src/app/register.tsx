@@ -15,6 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { RegisterUser } from "@/interfaces/UserRegistration";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 interface UserData {
   username: string;
@@ -40,6 +41,13 @@ export default function RegisterScreen() {
     roles: ["user"],
     disabled: false,
   });
+
+  const setRole = (role: string) => {
+    setUserData((prevState) => ({
+      ...prevState,
+      roles: [role],
+    }));
+  };
 
   const [showDatePicker, setShowDatePicker] = useState<boolean>(
     Platform.OS === "ios"
@@ -161,6 +169,12 @@ export default function RegisterScreen() {
           </View>
 
           <View className="mb-4 flex flex-col gap-3">
+            <View className="mb-3">
+              <AppText size="small" color="secondary">
+                {userData.roles[0]}
+              </AppText>
+              <RoleSwitcher setValue={setRole} value={userData.roles[0]} />
+            </View>
             <Input
               placeholder="Nome de usuário"
               value={userData.username}
@@ -199,8 +213,8 @@ export default function RegisterScreen() {
               maxLength={14}
             />
 
-            <View className="mb-2">
-              <AppText size="small" color="secondary" className="mb-1">
+            <View className="mb-2 flex-row items-center justify-center">
+              <AppText size="small" color="secondary">
                 Data de nascimento
               </AppText>
 

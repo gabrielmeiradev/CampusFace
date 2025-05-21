@@ -7,5 +7,6 @@ module.exports = {
     "prettier/prettier": "error",
     "import/no-unresolved": "off",
     "trailing-comma": "off",
+    "comma-dangle": ["never"],
   },
 };

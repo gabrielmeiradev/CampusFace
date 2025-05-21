@@ -1,11 +1,12 @@
 import AddHub from "@/components/card/AddHub";
-import Card from "@/components/card/Card";
+import Card, { StatusType } from "@/components/card/Card";
 import { getUserCards } from "@/services/card/getUsersCards";
 import { useEffect, useState } from "react";
 import { ScrollView, View, Text } from "react-native";
 
 export default function IndexScreen() {
   const [cards, setCards] = useState<any[]>([]);
+  const [status, setStatus] = useState(StatusType.WAITING);
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -13,6 +14,13 @@ export default function IndexScreen() {
       setCards(data);
     };
     fetchCards();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStatus(StatusType.ACCEPTED);
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
   return (
     <ScrollView
@@ -30,9 +38,16 @@ export default function IndexScreen() {
             </Text>
           </View>
         )}
-        {cards.map((card) => (
-          <Card key={card.id} id={card.id} title={card.title} />
-        ))}
+        {cards.map((card) => {
+          return (
+            <Card
+              key={card.id}
+              id={card.id}
+              title={card.title}
+              status={status}
+            />
+          );
+        })}
 
         <AddHub />
       </View>

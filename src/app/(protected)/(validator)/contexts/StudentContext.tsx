@@ -1,5 +1,5 @@
 // contexts/StudentContext.tsx
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState } from "react";
 
 export interface Student {
   id: string;
@@ -15,13 +15,11 @@ export const StudentContext = createContext<{
   setStudents: () => {},
 });
 
-export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [students, setStudents] = useState<Student[]>([
-    { id: 'meudeus1', name: 'John Doe', checkedIn: false },
-    { id: 'meudeus2', name: 'Jane Smith', checkedIn: false },
-    { id: 'meudeus3', name: 'Robert Johnson', checkedIn: false },
-    { id: 'meudeus4', name: 'Emily Williams', checkedIn: false },
-    { id: 'meudeus5', name: 'Michael Brown', checkedIn: false },
+    { id: "gabriel", name: "Gabriel Meira", checkedIn: false },
   ]);
 
   return (

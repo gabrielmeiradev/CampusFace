@@ -57,13 +57,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
         setIsLoggedIn(false);
 
         storeAuthState({ isLoggedIn: false });
+        console.log("Credenciais inválidas");
         throw new Error("Credenciais inválidas");
       }
 
       const data = await response.json();
       setIsLoggedIn(true);
       storeAuthState({ isLoggedIn: true });
-
+      console.log(data.main_role);
       if (data.main_role === "user") {
         router.replace("(protected)/(user)");
       } else if (data.main_role === "validator") {
@@ -79,6 +80,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const register = async (user: RegisterUser) => {
+    console.log("Registering user:", JSON.stringify(user));
+
     try {
       const response = await fetch(`${constants.API_URL}/user/create`, {
         method: "POST",
