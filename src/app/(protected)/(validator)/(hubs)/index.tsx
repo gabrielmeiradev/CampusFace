@@ -1,28 +1,20 @@
+// app/scanner.tsx
 import AddHub from "@/components/card/AddHub";
 import Card, { StatusType } from "@/components/card/Card";
 import { ICardInUser } from "@/interfaces/user";
-import { getUserCards } from "@/services/card/getUsersCards";
+import { getValidatorCards } from "@/services/card/getValidatorCards";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View, Text } from "react-native";
 
-export default function IndexScreen() {
+export default function HubsScreen() {
   const [cards, setCards] = useState<ICardInUser[]>([]);
-  const [status, setStatus] = useState(StatusType.WAITING);
-
   useEffect(() => {
     const fetchCards = async () => {
-      const data = await getUserCards();
+      const data = await getValidatorCards();
       setCards(data);
     };
     fetchCards();
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus(StatusType.ACCEPTED);
-    }, 5000);
-    return () => clearTimeout(timer);
   }, []);
   return (
     <ScrollView
@@ -43,13 +35,13 @@ export default function IndexScreen() {
         {cards.map((card) => {
           return (
             <Card
-              onPress={(id) => {
-                router.push("(tabs)/(home)/card/" + id);
-              }}
               key={card.id}
               id={card.id}
               title={card.title}
-              status={status}
+              status={StatusType.WAITING}
+              onPress={(id) => {
+                router.push("/(validate_options)");
+              }}
             />
           );
         })}

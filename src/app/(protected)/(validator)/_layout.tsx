@@ -9,8 +9,8 @@ export default function Layout() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size, focused }) => {
             let iconName = "";
-            if (route.name === "index") {
-              iconName = focused ? "qr-code" : "qr-code-outline";
+            if (route.name === "(hubs)") {
+              iconName = focused ? "grid" : "grid-outline";
             } else if (route.name === "students") {
               iconName = focused ? "people" : "people-outline";
             } else if (route.name === "settings") {
@@ -24,9 +24,13 @@ export default function Layout() {
           headerShown: true,
         })}
       >
-        <Tabs.Screen name="index" options={{ title: "Scanner" }} />
+        <Tabs.Screen name="(hubs)" options={{ title: "Meus hubs" }} />
         <Tabs.Screen name="students" options={{ title: "Diário" }} />
         <Tabs.Screen name="settings" options={{ title: "Configurações" }} />
+        {/* <Tabs.Screen
+          name="(validate_options)"
+          options={{ headerShown: false, href: null }}
+        /> */}
       </Tabs>
     </StudentProvider>
   );

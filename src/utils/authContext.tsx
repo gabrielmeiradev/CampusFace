@@ -11,7 +11,7 @@ type AuthState = {
   isReady: boolean;
   logIn: (email: string, password: string) => void;
   logOut: () => void;
-  register: (user: RegisterUser) => void;
+  register: (user: RegisterUser) => Promise<void>;
 };
 
 const authStorageKey = "auth-key";
@@ -21,7 +21,7 @@ export const AuthContext = createContext<AuthState>({
   isReady: false,
   logIn: (email: string, password: string) => {},
   logOut: () => {},
-  register: (user: RegisterUser) => {},
+  register: (user: RegisterUser) => Promise.resolve(),
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -40,10 +40,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const logIn = async (username: string, password: string) => {
     try {
+      // router.replace("(protected)/(validator)");
+      // return;
       const formData = new FormData();
       formData.append("username", username);
       formData.append("password", password);
-
+      console.log(constants.API_URL);
       const response = await fetch(`${constants.API_URL}/auth/login`, {
         method: "POST",
         body: formData,
@@ -60,12 +62,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
         console.log("Credenciais inválidas");
         throw new Error("Credenciais inválidas");
       }
+      ``;
 
       const data = await response.json();
       setIsLoggedIn(true);
       storeAuthState({ isLoggedIn: true });
-      console.log(data.main_role);
-      if (data.main_role === "user") {
+      if (data.main_role === "client") {
         router.replace("(protected)/(user)");
       } else if (data.main_role === "validator") {
         router.replace("(protected)/(validator)");
@@ -75,20 +77,36 @@ export function AuthProvider({ children }: PropsWithChildren) {
     } catch (error) {
       setIsLoggedIn(false);
       storeAuthState({ isLoggedIn: false });
-      throw new Error("Erro ao fazer login");
+      throw new Error("Erro ao fazer login " + (error as Error).message);
     }
   };
 
   const register = async (user: RegisterUser) => {
-    console.log("Registering user:", JSON.stringify(user));
+    const formData = new FormData();
+    formData.append("username", user.username);
+    formData.append("email", user.email);
+    formData.append("name", user.name);
+    formData.append("password", user.password);
+    formData.append("birthDate", user.birthDate);
+    formData.append("cpf", user.cpf);
+    formData.append("role", user.role);
+    if (user.image && user.image.uri) {
+      const file = {
+        uri: user.image.uri,
+        name: user.image.uri.split("/").pop() || "image.jpg",
+        type: user.image.type || "image/jpeg",
+      };
+
+      formData.append("image", file as any);
+    }
+
+    console.log("FormData being sent:", formData);
+    console.log(`${constants.API_URL}/user/create`);
 
     try {
       const response = await fetch(`${constants.API_URL}/user/create`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -98,6 +116,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const data = await response.json();
       console.log("Usuário registrado com sucesso:", data);
     } catch (error) {
+      console.log("Erro ao registrar usuário:", error);
       throw new Error("Erro ao registrar usuário");
     }
   };

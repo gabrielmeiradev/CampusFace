@@ -47,15 +47,17 @@ export default function LoginScreen() {
           secureTextEntry
         />
       </View>
-      <Button title="Entrar" onPress={() => handleLogin()} />
+      <View className="flex flex-col gap-3 mt-4">
+        <Button title="Entrar" onPress={() => handleLogin()} />
 
-      <Button
-        title="Não tenho uma conta"
-        theme={"secondary"}
-        onPress={() => {
-          router.push("/register");
-        }}
-      />
+        <Button
+          title="Não tenho uma conta"
+          theme={"secondary"}
+          onPress={() => {
+            router.push("/register");
+          }}
+        />
+      </View>
     </View>
   );
 }

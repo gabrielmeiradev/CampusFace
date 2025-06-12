@@ -58,19 +58,24 @@ export default function Card({
   status = StatusType.WAITING,
   subtitle,
   date,
+  onPress,
 }: {
   id: string;
   title: string;
   status?: StatusType;
   subtitle?: string;
   date?: string;
+  onPress: (id: string) => void;
 }) {
   const screenWidth = Dimensions.get("window").width;
 
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push("(tabs)/(home)/card/" + id);
+        if (onPress) {
+          onPress(id);
+          return;
+        }
       }}
       className="bg-white border border-gray-200 rounded-xl mb-3 shadow-sm overflow-hidden"
       style={{

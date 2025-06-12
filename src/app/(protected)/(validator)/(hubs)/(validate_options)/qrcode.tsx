@@ -7,12 +7,12 @@ import {
   Camera,
   PermissionStatus,
 } from "expo-camera";
-import { StudentContext } from "./contexts/StudentContext";
+import { StudentContext } from "../../contexts/StudentContext";
 
 export default function ScannerScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
-  const { students, setStudents } = useContext(StudentContext);
+  const { setStudents } = useContext(StudentContext);
 
   useEffect(() => {
     (async () => {
@@ -39,8 +39,6 @@ export default function ScannerScreen() {
       setStudents((prev) =>
         prev.map((s) => (s.id === studentId ? { ...s, checkedIn: true } : s))
       );
-
-      // alert(`Aluno com ID ${studentId} registrado com sucesso!`);
     } catch (error) {
       alert("Código QR inválido");
     }

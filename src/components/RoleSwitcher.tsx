@@ -8,7 +8,7 @@ type RoleSwitcherProps = {
 
 const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ value, setValue }) => {
   const roles = [
-    { label: "Integrante", key: "user" },
+    { label: "Integrante", key: "client" },
     { label: "Validador", key: "validator" },
   ];
 

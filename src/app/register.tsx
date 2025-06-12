@@ -10,22 +10,26 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { RegisterUser } from "@/interfaces/UserRegistration";
 import RoleSwitcher from "@/components/RoleSwitcher";
+import * as ImagePicker from "expo-image-picker";
 
 interface UserData {
   username: string;
+  name: string; // Optional, can be same as username
   email: string;
   password: string;
   confirmPassword: string;
   birthDate: Date;
   cpf: string;
-  roles: string[];
+  role: string;
   disabled: boolean;
+  image?: ImagePicker.ImagePickerAsset;
 }
 
 export default function RegisterScreen() {
@@ -34,18 +38,22 @@ export default function RegisterScreen() {
   const [userData, setUserData] = useState<UserData>({
     username: "",
     email: "",
+    name: "",
     password: "",
     confirmPassword: "",
     birthDate: new Date(),
     cpf: "",
-    roles: ["user"],
+    role: "client", // Default role, can be 'user' or 'integrante' or other
     disabled: false,
+    image: undefined,
   });
 
   const setRole = (role: string) => {
     setUserData((prevState) => ({
       ...prevState,
-      roles: [role],
+      role: role,
+      // Optionally reset image if role changes from 'integrante'
+      // image: role !== "integrante" ? undefined : prevState.image,
     }));
   };
 
@@ -94,11 +102,13 @@ export default function RegisterScreen() {
       username: "",
       email: "",
       password: "",
+      name: "",
       confirmPassword: "",
       birthDate: new Date(),
       cpf: "",
-      roles: ["user"],
+      role: "client",
       disabled: false,
+      image: undefined,
     });
   };
 
@@ -113,7 +123,86 @@ export default function RegisterScreen() {
     }
   };
 
-  const handleRegistration = () => {
+  const requestPermissions = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permissão necessária",
+        "Precisamos de permissão para acessar suas fotos."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const selectimage = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    Alert.alert("Selecionar foto", "Escolha uma opção:", [
+      {
+        text: "Galeria",
+        onPress: () => openImagePicker("gallery"),
+      },
+      {
+        text: "Câmera",
+        onPress: () => openImagePicker("camera"),
+      },
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+    ]);
+  };
+
+  const openImagePicker = async (source: "gallery" | "camera") => {
+    try {
+      let result;
+
+      if (source === "camera") {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permissão necessária",
+            "Precisamos de permissão para usar a câmera."
+          );
+          return;
+        }
+
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.8,
+        });
+      } else {
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.8,
+        });
+      }
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setUserData({
+          ...userData,
+          image: result.assets[0],
+        });
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível selecionar a imagem.");
+    }
+  };
+
+  const removeimage = () => {
+    setUserData({
+      ...userData,
+      image: undefined,
+    });
+  };
+
+  const handleRegistration = async () => {
     if (userData.password !== userData.confirmPassword) {
       alert("As senhas não coincidem");
       return;
@@ -130,20 +219,27 @@ export default function RegisterScreen() {
       password: userData.password,
       birthDate: userData.birthDate.toISOString(),
       cpf: userData.cpf,
-      roles: userData.roles,
+      role: userData.role,
       disabled: userData.disabled,
+      image: userData.image, // Only include image if role is 'integrante'
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      name: userData.name, // Assuming username is used as name
     };
 
-    try {
-      authContext.register(user);
-      console.log("Registration data:", user);
-      alert("Registro realizado com sucesso!");
-      clearInputs();
-    } catch (error) {
-      alert((error as Error).message);
-    }
+    authContext
+      .register(user)
+      .then(() => {
+        clearInputs();
+        router.push("/login");
+      })
+      .catch((error: Error) => {
+        console.error("Erro ao registrar usuário:", error);
+        Alert.alert(
+          "Erro",
+          "Não foi possível registrar o usuário. Tente novamente."
+        );
+      });
   };
 
   const formatDateForDisplay = (date: Date): string => {
@@ -163,24 +259,62 @@ export default function RegisterScreen() {
             <AppText size="heading" className="!mb-2" center bold>
               Criar nova conta
             </AppText>
+
             <AppText size="medium" color="secondary" center>
               Preencha seus dados para se registrar
             </AppText>
           </View>
 
-          <View className="mb-4 flex flex-col gap-3">
-            <View className="mb-3">
-              <AppText size="small" color="secondary">
-                {userData.roles[0]}
-              </AppText>
-              <RoleSwitcher setValue={setRole} value={userData.roles[0]} />
-            </View>
+          <RoleSwitcher value={userData.role} setValue={setRole} />
+
+          <View className="mb-4 flex flex-col gap-3 mt-6">
+            {/* image Section - Conditional Rendering */}
+            {userData.role == "client" && (
+              <View className="mb-4 items-center">
+                <View className="relative">
+                  {userData.image ? (
+                    <View className="items-center">
+                      <Image
+                        source={{ uri: userData.image.uri }}
+                        className="w-36 h-36 rounded-full"
+                      />
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={selectimage}
+                      className="w-36 h-36 rounded-full border-2 border-dashed border-gray-400 items-center justify-center bg-gray-100"
+                    >
+                      <AppText
+                        size="small"
+                        color="secondary"
+                        className="text-center"
+                      >
+                        Adicionar{"\n"}Foto
+                      </AppText>
+                    </TouchableOpacity>
+                  )}
+                </View>
+
+                {userData.image && (
+                  <TouchableOpacity onPress={selectimage} className="mt-2">
+                    <AppText size="small" className="text-blue-500">
+                      Alterar foto
+                    </AppText>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+
+            <Input
+              placeholder="Nome completo"
+              value={userData.name}
+              onChangeText={(text) => handleInputChange("name", text)}
+            />
             <Input
               placeholder="Nome de usuário"
               value={userData.username}
               onChangeText={(text) => handleInputChange("username", text)}
             />
-
             <Input
               placeholder="E-mail"
               value={userData.email}
@@ -188,14 +322,12 @@ export default function RegisterScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
             />
-
             <Input
               placeholder="Senha"
               value={userData.password}
               onChangeText={(text) => handleInputChange("password", text)}
               secureTextEntry
             />
-
             <Input
               placeholder="Confirmar senha"
               value={userData.confirmPassword}
@@ -204,7 +336,6 @@ export default function RegisterScreen() {
               }
               secureTextEntry
             />
-
             <Input
               placeholder="CPF (xxx.xxx.xxx-xx)"
               value={userData.cpf}
@@ -212,16 +343,15 @@ export default function RegisterScreen() {
               keyboardType="numeric"
               maxLength={14}
             />
-
-            <View className="mb-2 flex-row items-center justify-center">
+            <View className="mb-2 flex-row items-center justify-between px-1">
               <AppText size="small" color="secondary">
-                Data de nascimento
+                Data de nascimento:
               </AppText>
 
               {Platform.OS === "android" && (
                 <TouchableOpacity
                   onPress={() => setShowDatePicker(true)}
-                  className="border p-3 rounded-md border-gray-300"
+                  className="border p-3 rounded-md border-gray-300 bg-white" // Added bg-white for better visibility
                 >
                   <AppText>{formatDateForDisplay(userData.birthDate)}</AppText>
                 </TouchableOpacity>
@@ -231,29 +361,37 @@ export default function RegisterScreen() {
                 <DateTimePicker
                   value={userData.birthDate}
                   mode="date"
-                  display={"default"}
+                  display={"default"} // can be "spinner", "calendar"
                   onChange={handleDateChange}
                   maximumDate={new Date()}
+                  // style={{ width: Platform.OS === 'ios' ? '100%' : undefined }} // Full width for iOS if desired
                 />
               )}
 
               {Platform.OS === "ios" && !showDatePicker && (
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                  <AppText className="text-blue-500">Selecionar data</AppText>
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  className="p-3"
+                >
+                  <AppText className="text-blue-500">
+                    {formatDateForDisplay(userData.birthDate)}
+                  </AppText>
                 </TouchableOpacity>
               )}
             </View>
           </View>
 
-          <Button title="Cadastrar" onPress={handleRegistration} />
+          <View className="flex-col gap-3">
+            <Button title="Cadastrar" onPress={handleRegistration} />
 
-          <Button
-            title="Já tenho uma conta"
-            theme={"secondary"}
-            onPress={() => {
-              router.push("/login");
-            }}
-          />
+            <Button
+              title="Já tenho uma conta"
+              theme={"secondary"}
+              onPress={() => {
+                router.push("/login");
+              }}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

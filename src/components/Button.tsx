@@ -18,7 +18,7 @@ export const Button = React.forwardRef<
       ref={ref}
       onPress={onPress}
       className={cn(
-        "flex-row items-center justify-center rounded-full px-5 py-3 mb-4 border",
+        "flex-row items-center justify-center rounded-full px-5 py-3 border",
         theme === "primary" && "bg-primary border-primary",
         theme === "secondary" && "bg-white border-gray-300",
         theme === "tertiary" && "bg-transparent border-transparent",
